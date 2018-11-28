@@ -14,6 +14,6 @@ RUN CGO_ENABLED=0 go install -v -ldflags "-X main.VERSION=$(git describe --abbre
 FROM scratch
 COPY --from=builder /etc/passwd.nobody /etc/passwd
 COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs/
-COPY --from=builder /go/bin/janitor /es-janitor
+COPY --from=builder /go/bin/es-janitor /es-janitor
 USER nobody
 ENTRYPOINT ["/es-janitor"]
