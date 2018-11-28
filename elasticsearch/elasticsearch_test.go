@@ -112,7 +112,7 @@ func TestClientDeleteIndexFailedRequest(t *testing.T) {
 	}
 	err := es.DeleteIndex("filebeat-6.4.3-2018.11.21")
 	if err == nil {
-		t.Errorf("expected error, got nil")
+		t.Fatalf("expected error, got nil")
 	}
 }
 
@@ -128,7 +128,7 @@ func TestClientDeleteIndexInvalidStatusCode(t *testing.T) {
 	}
 	err := es.DeleteIndex("filebeat-6.4.3-2018.11.21")
 	if err == nil {
-		t.Errorf("expected error, got nil")
+		t.Fatalf("expected error, got nil")
 	}
 	expected := "failed to delete index filebeat-6.4.3-2018.11.21, response code: 500, response body: burn"
 	if err.Error() != expected {
@@ -165,7 +165,7 @@ func TestClientRestoreSnapshotFailedRequest(t *testing.T) {
 	}
 	err := es.RestoreSnapshot("repo", "filebeat-6.4.3-2018.11.21")
 	if err == nil {
-		t.Errorf("expected error, got nil")
+		t.Fatalf("expected error, got nil")
 	}
 }
 
@@ -181,7 +181,7 @@ func TestClientRestoreSnapshotInvalidStatusCode(t *testing.T) {
 	}
 	err := es.RestoreSnapshot("repo", "filebeat-6.4.3-2018.11.21")
 	if err == nil {
-		t.Errorf("expected error, got nil")
+		t.Fatalf("expected error, got nil")
 	}
 	expected := "failed to restore snapshot filebeat-6.4.3-2018.11.21, response code: 500, response body: burn"
 	if err.Error() != expected {
@@ -200,6 +200,10 @@ func TestClientSnapshotIndex(t *testing.T) {
 		}
 		if got := r.URL.Query().Get("wait_for_completion"); got != "true" {
 			t.Errorf("incorrect format querystring used: %s", got)
+		}
+
+		if got := r.Header.Get("Content-Type"); got != "application/json" {
+			t.Errorf("Invalid Content-Type header: %q", got)
 		}
 		payload := struct {
 			Indices            string `json:"indices"`
@@ -232,7 +236,7 @@ func TestClientSnapshotIndexFailedRequest(t *testing.T) {
 	}
 	err := es.SnapshotIndex("repo", "filebeat-6.4.3-2018.11.21")
 	if err == nil {
-		t.Errorf("expected error, got nil")
+		t.Fatalf("expected error, got nil")
 	}
 }
 
@@ -248,7 +252,7 @@ func TestClientSnapshotIndexInvalidStatusCode(t *testing.T) {
 	}
 	err := es.SnapshotIndex("repo", "filebeat-6.4.3-2018.11.21")
 	if err == nil {
-		t.Errorf("expected error, got nil")
+		t.Fatalf("expected error, got nil")
 	}
 	name := fmt.Sprintf("index-%s-on-%s", "filebeat-6.4.3-2018.11.21", time.Now().Format(time.RFC3339))
 	expected := "failed to snapshot " + name + ", response code: 500, response body: burn"

@@ -89,6 +89,7 @@ func (c *Client) SnapshotIndex(repository, indexName string) error {
 	if err != nil {
 		return fmt.Errorf("cannot create request to snapshot index: %s", err)
 	}
+	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("request to snapshot index failed: %s", err)
