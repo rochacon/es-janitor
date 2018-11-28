@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: golang:1.11-alpine
+    environment:
+      CGO_ENABLED: "0"
+    steps:
+    - checkout
+    - run: go test -cover -v ./...
