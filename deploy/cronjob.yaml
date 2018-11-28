@@ -1,0 +1,39 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: es-janitor
+  namespace: kube-logging
+  labels:
+    app: es-janitor
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
+  schedule: "5 0 * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          labels:
+            app: es-janitor
+        spec:
+          containers:
+          - name: janitor
+            image: quay.io/rochacon/es-janitor:latest
+            # imagePullPolicy: IfNotPresent
+            args:
+            - -days=32
+            - -endpoint=https://elasticsearch.example.com
+            - -repository=s3-snapshots
+            resources:
+              limits:
+                cpu: 250m
+                memory: 250Mi
+              requests:
+                cpu: 25m
+                memory: 200Mi
+          restartPolicy: Never
