@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 )
 
 func TestClientCatIndices(t *testing.T) {
@@ -194,7 +193,7 @@ func TestClientSnapshotIndex(t *testing.T) {
 		if r.Method != "PUT" {
 			t.Errorf("Invalid HTTP Method: %s", r.Method)
 		}
-		name := fmt.Sprintf("index-%s-on-%s", "filebeat-6.4.3-2018.11.21", time.Now().Format(time.RFC3339))
+		name := fmtSnapshotName("filebeat-6.4.3-2018.11.21")
 		if r.URL.Path != "/_snapshot/repo/"+name {
 			t.Errorf("incorrect path used: %s", r.URL.Path)
 		}
@@ -254,7 +253,7 @@ func TestClientSnapshotIndexInvalidStatusCode(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
-	name := fmt.Sprintf("index-%s-on-%s", "filebeat-6.4.3-2018.11.21", time.Now().Format(time.RFC3339))
+	name := fmtSnapshotName("filebeat-6.4.3-2018.11.21")
 	expected := "failed to snapshot " + name + ", response code: 500, response body: burn"
 	if err.Error() != expected {
 		t.Errorf("unexpected error returned: %s", err)

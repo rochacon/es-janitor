@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -80,7 +81,7 @@ func (c *Client) RestoreSnapshot(repository, name string) error {
 // RestoreSnapshot requests the restore of snapshots.
 // Multiple indexes may be snapshotted at once, by providing a comma separated name.
 func (c *Client) SnapshotIndex(repository, indexName string) error {
-	name := fmt.Sprintf("index-%s-on-%s", indexName, time.Now().Format(time.RFC3339))
+	name := fmtSnapshotName(indexName)
 	log.Println("Creating snapshot", name)
 	url := fmt.Sprintf("%s/_snapshot/%s/%s?wait_for_completion=true", c.Endpoint, repository, name)
 	buf := &bytes.Buffer{}
@@ -100,4 +101,8 @@ func (c *Client) SnapshotIndex(repository, indexName string) error {
 		return fmt.Errorf("failed to snapshot %s, response code: %d, response body: %s", name, resp.StatusCode, body)
 	}
 	return nil
+}
+
+func fmtSnapshotName(indexName string) string {
+	return strings.ToLower(strings.Replace(fmt.Sprintf("index-%s-on-%s", indexName, time.Now().Format(time.RFC3339)), ":", "", -1))
 }
